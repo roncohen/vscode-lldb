@@ -139,10 +139,22 @@ jobs:
   pool:
     vmImage: 'macOS 10.14'
 
+  strategy:
+    matrix:
+      x86_64:
+        PlatformId: 'x86_64-darwin'
+        Triple: 'x86_64-apple-darwin'
+        RustTarget: 'x86_64-apple-darwin'
+        CrossBuilding: false
+      aarch64:
+        PlatformId: 'aarch64-darwin'
+        Triple: 'aarch64-apple-darwin'
+        RustTarget: 'aarch64-apple-darwin'
+        rustcVersion: 'beta'
+        CrossBuilding: true
+
   variables:
-    cachePrefix: $(cacheDiscr) | x86_64-apple-darwin
-    PlatformId: 'x86_64-darwin'
-    Triple: 'x86_64-apple-darwin'
+    cachePrefix: $(cacheDiscr) | $(Triple)
 
   steps:
 
@@ -180,6 +192,7 @@ jobs:
       source $HOME/.cargo/env
       rustup toolchain install $(rustcVersion)
       rustup default $(rustcVersion)
+      rustup add target $(Triple)
       rustup show
     displayName: 'Install Rust'
 
